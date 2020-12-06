@@ -2,30 +2,41 @@ import React, { useState } from 'react';
 import './index.css';
 
 export default function ProductList(props) {
-	const [updateMode, setUpdateMode] = useState({
-		ADD: 1,
-		SUBTRACT: 0,
-	});
-	function handleClick() {
-		setUpdateMode({ ...updateMode, SUBTRACT: updateMode.SUBTRACT + 1 });
-	}
-	const increment = () => {
-		setUpdateMode({
-			...updateMode,
-			ADD: updateMode.ADD + 1,
-			SUBTRACT: updateMode.SUBTRACT === 0 ? 0 : updateMode.SUBTRACT + 1,
+	const [addProd, setProduct] = useState(props.products);
+
+	const handleClick = (product) => {
+		let temp = addProd;
+		temp.forEach((ele, index) => {
+			if (ele.id === product.id) {
+				temp[index].cartQuantity = ele.cartQuantity + 1;
+			}
 		});
+		setProduct([...temp]);
+		props.setCart([...temp]);
 	};
-	const decrement = () => {
-		setUpdateMode({
-			...updateMode,
-			ADD: updateMode.ADD === 1 ? 1 : updateMode.ADD - 1,
-			SUBTRACT: updateMode.SUBTRACT === 0 ? 0 : updateMode.SUBTRACT - 1,
+	const increment = (product) => {
+		let temp = addProd;
+		temp.forEach((ele, index) => {
+			if (ele.id === product.id) {
+				temp[index].cartQuantity = ele.cartQuantity + 1;
+			}
 		});
+		setProduct([...temp]);
+		props.setCart([...temp]);
+	};
+	const decrement = (product) => {
+		let temp = addProd;
+		temp.forEach((ele, index) => {
+			if (ele.id === product.id) {
+				temp[index].cartQuantity = ele.cartQuantity - 1;
+			}
+		});
+		setProduct([...temp]);
+		props.setCart([...temp]);
 	};
 	return (
 		<div className='layout-row wrap justify-content-center flex-70 app-product-list'>
-			{props.products.map((product, i) => {
+			{addProd.map((product, i) => {
 				return (
 					<section
 						className='w-30'
@@ -43,11 +54,11 @@ export default function ProductList(props) {
 								<p className='ma-0 mt-8 text-center'>${product.price}</p>
 							</div>
 							<div className='card-actions justify-content-center pa-4'>
-								{updateMode.SUBTRACT === 0 ? (
+								{product.cartQuantity === 0 ? (
 									<button
 										className='x-small outlined'
 										data-testid='btn-item-add'
-										onClick={handleClick}
+										onClick={() => handleClick(product)}
 										key={product.id}
 									>
 										Add To Cart
@@ -57,7 +68,7 @@ export default function ProductList(props) {
 										<button
 											className='x-small icon-only outlined'
 											data-testid='btn-quantity-subtract'
-											onClick={decrement}
+											onClick={() => decrement(product)}
 										>
 											<i className='material-icons'>remove</i>
 										</button>
@@ -67,13 +78,13 @@ export default function ProductList(props) {
 											disabled
 											className='cart-quantity'
 											data-testid='cart-quantity'
-											value={updateMode.ADD}
+											value={product.cartQuantity}
 										/>
 
 										<button
 											className='x-small icon-only outlined'
 											data-testid='btn-quantity-add'
-											onClick={increment}
+											onClick={() => increment(product)}
 										>
 											<i className='material-icons'>add</i>
 										</button>
